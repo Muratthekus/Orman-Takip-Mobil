@@ -11,16 +11,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import me.thekusch.ormantakipmobil.presentation.home.HomeScreen
 import me.thekusch.ormantakipmobil.presentation.splash.AnimatedSplashScreen
 import me.thekusch.ormantakipmobil.ui.theme.OrmanTakipMobilTheme
 import me.thekusch.ormantakipmobil.util.Screen
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            OrmanTakipMobilTheme(darkTheme = true) {
+            OrmanTakipMobilTheme {
                 Surface(color = MaterialTheme.colors.background) {
                     val navController = rememberNavController()
                     NavHost(
@@ -35,7 +37,9 @@ class MainActivity : ComponentActivity() {
                             composable(
                                 route = Screen.Home.route
                             ) {
-                                HomeScreen()
+                                HomeScreen(
+                                    navController = navController
+                                )
                             }
                         }
                     )

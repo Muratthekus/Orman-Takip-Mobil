@@ -40,7 +40,7 @@ fun AnimatedSplashScreen(
             durationMillis = 3000
         )
     )
-    LaunchedEffect(key1 = true ) {
+    LaunchedEffect(key1 = true) {
         isAnimationStart = true
         delay(4000)
         navController.popBackStack()
@@ -53,8 +53,7 @@ fun AnimatedSplashScreen(
 fun SplashScreen(alphaVal: Float) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(LightBrown),
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -63,8 +62,9 @@ fun SplashScreen(alphaVal: Float) {
         ) {
             Surface(
                 shape = CircleShape,
-                color = MaterialTheme.colors.primary,
-                modifier = Modifier.size(150.dp, 150.dp)
+                color = Color.White,
+                modifier = Modifier.size(150.dp, 150.dp),
+                elevation = 5.dp
             ) {
                 Image(
                     painterResource(id = R.drawable.logo),
@@ -78,7 +78,7 @@ fun SplashScreen(alphaVal: Float) {
                 text = stringResource(id = R.string.splash_title),
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colors.secondary
+                modifier = Modifier.padding(top = 5.dp)
             )
         }
     }
