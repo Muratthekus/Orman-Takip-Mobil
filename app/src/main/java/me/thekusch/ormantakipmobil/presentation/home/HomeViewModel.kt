@@ -16,6 +16,12 @@ class HomeViewModel @Inject constructor(
     private val getFireDataUseCase: GetFireDataUseCase
 ) : ViewModel() {
 
+    var selectedCity: String? = getCityList()[0]
+    var selectedDistrict: String? = null
+    var selectedConfidence: String? = null
+    var selectedStartDate: String? = null
+    var selectedEndDate: String? = null
+
     private val _state = mutableStateOf(HomeScreenState())
 
     val state: State<HomeScreenState>
@@ -54,6 +60,10 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun getCityList(): List<String> {
+        return listOf("Hepsi","Kayseri","Adana")
     }
 
 }
