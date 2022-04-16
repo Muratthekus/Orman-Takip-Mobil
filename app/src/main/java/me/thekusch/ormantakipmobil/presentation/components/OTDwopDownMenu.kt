@@ -18,15 +18,16 @@ import androidx.compose.ui.unit.toSize
 
 @Composable
 fun OTDropDownMenu(
-    mList: List<String>,
+    mList: List<String>?,
     label: String,
-    onItemSelected: (String) -> Unit
+    onItemSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var expanded by remember {
         mutableStateOf(false)
     }
     var selectedText by remember {
-        mutableStateOf(mList[0])
+        mutableStateOf(mList?.getOrNull(0))
     }
     var textFieldSize by remember {
         mutableStateOf(Size.Zero)
@@ -35,12 +36,13 @@ fun OTDropDownMenu(
         Icons.Filled.ArrowDropUp
     else
         Icons.Filled.ArrowDropDown
+
     Column {
         OutlinedTextField(
-            value = selectedText,
+            value = selectedText ?: "",
             onValueChange = { selectedText = it },
             readOnly = true,
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
@@ -64,7 +66,7 @@ fun OTDropDownMenu(
             modifier = Modifier
                 .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
         ) {
-            mList.forEach { item ->
+            mList?.forEach { item ->
                 DropdownMenuItem(
                     onClick = {
                         selectedText = item

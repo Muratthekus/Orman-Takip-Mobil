@@ -1,33 +1,33 @@
 package me.thekusch.ormantakipmobil.presentation.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Rect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Filter
-import androidx.compose.material.icons.filled.Filter3
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.launch
 import me.thekusch.ormantakipmobil.presentation.components.Drawer
 import me.thekusch.ormantakipmobil.presentation.components.FilterType
 import me.thekusch.ormantakipmobil.presentation.components.FireDataItem
+import me.thekusch.ormantakipmobil.util.CityUtil
+import androidx.compose.runtime.*
 
 @Composable
 fun HomeScreen(
@@ -35,17 +35,12 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val listData = viewModel.state.value
-    val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
-    val drawerstate = rememberDrawerState(DrawerValue.Closed)
-    val listState = rememberLazyListState()
-    val openDrawer = {
-        scope.launch {
-            drawerstate.open()
-        }
+    val districtList: MutableState<List<String>?> = remember{
+        mutableStateOf(emptyList())
     }
+    val homeUiState = rememberHomeUiState()
     Scaffold(
-        scaffoldState = scaffoldState,
+        scaffoldState = homeUiState.scaffoldState,
         topBar = {
             TopAppBar(
                 title = {
@@ -57,19 +52,41 @@ fun HomeScreen(
                     )
                 },
                 elevation = 2.dp,
-                actions = {
-                    IconButton(
-                        onClick = {
-                            openDrawer()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "Filtre"
-                        )
+            )
+        },
+        drawerContent =  {
+            Drawer(
+                activity = homeUiState.activity,
+                cityList = CityUtil.getCityList(),
+                districtList = districtList.value,
+                confidenceList = CityUtil.getCityList(),
+                onFilterItemSelected = { key: FilterType, value: String ->
+                    viewModel.setFilterValues(key, value)
+                    if(key == FilterType.CITY) {
+                        viewModel.selectedDistrict = null
+                        districtList.value = viewModel.getDistrictOfCity()
                     }
+                },
+                onItemSelected = { key: FilterType, value: String? ->
+                    viewModel.setFilterValues(key, value)
+                },
+                onApplyClicked = {
+                    viewModel.getFireData(
+                        district = viewModel.getSelectedDistrictValue(districtList.value)
+                    )
                 }
             )
+        },
+        drawerGesturesEnabled = true,
+        drawerShape = object: Shape {
+            override fun createOutline(
+                size: Size,
+                layoutDirection: LayoutDirection,
+                density: Density
+            ): Outline {
+                return Outline.Rectangle(Rect(0f,0f,size.width*2/3 , size.height))
+            }
+
         }
     ) {
         Surface(
@@ -77,7 +94,7 @@ fun HomeScreen(
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(
-                    state = listState,
+                    state = homeUiState.listState,
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(
@@ -100,39 +117,6 @@ fun HomeScreen(
             if (listData.isLoading) {
                 CircularProgressIndicator()
             }
-            ModalDrawer(
-                content = {
-
-                },
-                drawerState = drawerstate,
-                gesturesEnabled = drawerstate.isOpen,
-                drawerContent = {
-                    Drawer(
-                        cityList = viewModel.getCityList() ,
-                        districtList = viewModel.getCityList(),
-                        confidenceList = viewModel.getCityList(),
-                        onFilterItemSelected = {key: FilterType, value: String ->
-                            when(key) {
-                                FilterType.CITY -> {
-                                    viewModel.selectedCity = value
-                                }
-                                FilterType.DISTRICT -> {
-                                    viewModel.selectedDistrict = value
-                                }
-                                FilterType.CONFIDENCE -> {
-                                    viewModel.selectedConfidence = value
-                                }
-                                FilterType.START_DATE -> {
-                                    viewModel.selectedStartDate = value
-                                }
-                                FilterType.END_DATE -> {
-                                    viewModel.selectedEndDate = value
-                                }
-                            }
-                        }
-                    )
-                }
-            )
         }
     }
 

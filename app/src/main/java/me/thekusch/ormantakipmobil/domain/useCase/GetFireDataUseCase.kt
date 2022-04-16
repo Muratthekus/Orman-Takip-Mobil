@@ -13,8 +13,8 @@ class GetFireDataUseCase @Inject constructor(
     private val baseRepository: BaseRepository
 ){
     operator fun invoke(
-        city: String? = null,
-        district: String? = null,
+        city: Int? = null,
+        district: Int? = null,
         startDate: String? = null,
         endDate: String? = null,
         confidence: String? = null

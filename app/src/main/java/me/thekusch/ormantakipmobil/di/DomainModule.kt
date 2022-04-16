@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.thekusch.ormantakipmobil.domain.repository.BaseRepository
+import me.thekusch.ormantakipmobil.domain.useCase.GetDistrictsUseCase
 import me.thekusch.ormantakipmobil.domain.useCase.GetFireDataUseCase
 import javax.inject.Singleton
 
@@ -17,4 +18,10 @@ object DomainModule {
     fun provideGetFireDataUseCase(
         baseRepository: BaseRepository
     ) = GetFireDataUseCase(baseRepository)
+
+    @Provides
+    @Singleton
+    fun provideGetDistrictsUseCase(
+        baseRepository: BaseRepository
+    ) = GetDistrictsUseCase(baseRepository)
 }
