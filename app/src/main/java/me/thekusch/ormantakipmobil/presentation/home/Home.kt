@@ -1,8 +1,6 @@
 package me.thekusch.ormantakipmobil.presentation.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,6 +26,7 @@ import me.thekusch.ormantakipmobil.presentation.components.FilterType
 import me.thekusch.ormantakipmobil.presentation.components.FireDataItem
 import me.thekusch.ormantakipmobil.util.CityUtil
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun HomeScreen(
@@ -35,7 +34,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val listData = viewModel.state.value
-    val districtList: MutableState<List<String>?> = remember{
+    val districtList: MutableState<List<String>?> = remember {
         mutableStateOf(emptyList())
     }
     val homeUiState = rememberHomeUiState()
@@ -54,7 +53,7 @@ fun HomeScreen(
                 elevation = 2.dp,
             )
         },
-        drawerContent =  {
+        drawerContent = {
             Drawer(
                 activity = homeUiState.activity,
                 cityList = CityUtil.getCityList(),
@@ -62,7 +61,7 @@ fun HomeScreen(
                 confidenceList = CityUtil.getCityList(),
                 onFilterItemSelected = { key: FilterType, value: String ->
                     viewModel.setFilterValues(key, value)
-                    if(key == FilterType.CITY) {
+                    if (key == FilterType.CITY) {
                         viewModel.selectedDistrict = null
                         districtList.value = viewModel.getDistrictOfCity()
                     }
@@ -78,13 +77,13 @@ fun HomeScreen(
             )
         },
         drawerGesturesEnabled = true,
-        drawerShape = object: Shape {
+        drawerShape = object : Shape {
             override fun createOutline(
                 size: Size,
                 layoutDirection: LayoutDirection,
                 density: Density
             ): Outline {
-                return Outline.Rectangle(Rect(0f,0f,size.width*2/3 , size.height))
+                return Outline.Rectangle(Rect(0f, 0f, size.width * 2 / 3, size.height))
             }
 
         }
@@ -95,7 +94,8 @@ fun HomeScreen(
             Column(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(
                     state = homeUiState.listState,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
                 ) {
                     items(
                         listData.data
@@ -104,11 +104,16 @@ fun HomeScreen(
                             firedata = fireData,
                             isFavorite = false,
                             onItemClick = {
-
+                                homeUiState.openMap(it.longitude,it.latitude)
                             },
                             onFavoriteClick = {
 
                             }
+                        )
+                        Divider(
+                            color = Color.Green,
+                            thickness = 2.dp,
+                            modifier = Modifier.padding(top = 5.dp)
                         )
                     }
                 }

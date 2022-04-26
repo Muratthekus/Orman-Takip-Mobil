@@ -1,5 +1,7 @@
 package me.thekusch.ormantakipmobil.presentation.home
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,6 +26,13 @@ class HomeUiState(
 
     fun showSnackbar(message: String) = scope.launch {
         scaffoldState.snackbarHostState.showSnackbar(message)
+    }
+
+    fun openMap(lng:Double,lat:Double) {
+        val urlAddress =
+            "http://maps.google.com/maps?q=${lat},${lng}(Yangın yeri)&iwloc=A&hl=es"
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlAddress))
+        activity.startActivity(intent)
     }
 
 }

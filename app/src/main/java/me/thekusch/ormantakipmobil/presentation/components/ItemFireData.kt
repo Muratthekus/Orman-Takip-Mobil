@@ -31,25 +31,33 @@ fun FireDataItem(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .clickable { onItemClick(firedata) },
+            .height(120.dp),
     ) {
-        Row(modifier = Modifier.fillMaxSize()) {
+        // wrapper
+        Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+            // place - location
             Column(
                 modifier = Modifier.weight(4f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "Yer")
                 Text(
-                    text = "${firedata.city}/${firedata.district}",
-                    modifier = Modifier
-                        .padding(top = 5.dp),
-                    fontSize = 12.sp
+                    text = "\uD83D\uDCCC Konum: ${firedata.city}/${firedata.district}",
                 )
 
-                Text(text = "Tarih", modifier = Modifier.padding(top = 10.dp))
-                Text(text = firedata.alertDate, fontSize = 12.sp)
+                Text(
+                    text = "\uD83D\uDCC6 Uyarı zamanı: ${firedata.alertDate}",
+                    modifier = Modifier.padding(top = 10.dp)
+                )
 
+                Text(
+                    text = "\uD83E\uDDED Enlem: ${firedata.latitude}/${firedata.longitude}",
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+
+                Text(
+                    text = "\uD83D\uDFE2 Güvenilirlik: ${firedata.confidence}",
+                    modifier = Modifier.padding(top = 10.dp)
+                )
 
             }
 
@@ -65,7 +73,22 @@ fun FireDataItem(
                         else R.drawable.ic_no_favorited
                     ),
                     contentDescription = "isFavorite",
-                    Modifier.clickable { onFavoriteClick(firedata) }
+                    Modifier
+                        .clickable { onFavoriteClick(firedata) }
+                        .size(40.dp)
+                )
+
+                Image(
+                    painter = painterResource(
+                        id = R.drawable.ic_baseline_map_24
+                    ),
+                    contentDescription = "mapIcon",
+                    Modifier
+                        .size(40.dp)
+                        .padding(top = 10.dp)
+                        .clickable {
+                            onItemClick(firedata)
+                        }
                 )
 
             }
